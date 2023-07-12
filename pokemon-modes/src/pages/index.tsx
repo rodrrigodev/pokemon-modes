@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { GetServerSideProps } from 'next'
+import { GetStaticProps } from 'next'
 import Link from 'next/link'
 import styles from '../styles/Home.module.css'
 import Image from 'next/image'
@@ -40,16 +40,15 @@ export default function Home({ pokemon }: Pokemon) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => {
   const resp = await fetch(
     'https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json',
   )
 
-  const x = await resp.json()
-  console.log(x)
+  const response = await resp.json()
   return {
     props: {
-      pokemon: x,
+      pokemon: response,
     },
   }
 }

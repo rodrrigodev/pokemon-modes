@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import styles from '../../styles/Details.module.css'
-import { GetServerSideProps } from 'next'
+import { GetStaticPaths, GetStaticProps } from 'next'
 
 interface Pokemon {
   pokemon: {
@@ -11,8 +11,13 @@ interface Pokemon {
   }
 }
 
+interface PokemonPaths {
+  id: number
+  name: string
+  image: string
+}
+
 export default function Details({ pokemon }: Pokemon) {
-  console.log(pokemon)
   return (
     <>
       {pokemon && (
@@ -49,7 +54,21 @@ export default function Details({ pokemon }: Pokemon) {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getStaticPaths: GetStaticPaths = async () => {
+  const resp = await fetch(
+    'https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json',
+  )
+  const pokemon: Promise<PokemonPaths[]> = await resp.json()
+
+  return {
+    paths: (await pokemon).map((pokemon) => ({
+      params: { id: pokemon.id.toString() },
+    })),
+    fallback: false,
+  }
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
   const id = String(params?.id)
   const resp = await fetch(
     `https://jherr-pokemon.s3.us-west-1.amazonaws.com/pokemon/${id}.json`,
