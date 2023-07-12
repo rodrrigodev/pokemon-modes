@@ -1,0 +1,14 @@
+.card{
+    display: flex;
+    gap: 1rem;
+}
+
+.td{
+    font-weight: bold;
+}
+
+.type{
+    display: block;
+    margin: 0.25rem 0;
+    font-weight: bold;
+}

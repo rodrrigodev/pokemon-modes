@@ -1,30 +1,18 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
-import styles from '../styles/Home.module.css'
+import { GetServerSideProps } from 'next'
 import Link from 'next/link'
+import styles from '../styles/Home.module.css'
 import Image from 'next/image'
 
-export interface Pokemon {
-  id: string
-  name: string
-  image: string
+interface Pokemon {
+  pokemon: {
+    id: string
+    name: string
+    image: string
+  }[]
 }
 
-export default function Home() {
-  const [pokemon, setPokemon] = useState<Pokemon[]>([])
-  console.log(pokemon)
-
-  useEffect(() => {
-    async function getPokemon() {
-      const resp = await fetch(
-        'https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json',
-      )
-      setPokemon(await resp.json())
-    }
-
-    getPokemon()
-  }, [])
-
+export default function Home({ pokemon }: Pokemon) {
   return (
     <>
       <Head>
@@ -50,4 +38,18 @@ export default function Home() {
       </div>
     </>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const resp = await fetch(
+    'https://jherr-pokemon.s3.us-west-1.amazonaws.com/index.json',
+  )
+
+  const x = await resp.json()
+  console.log(x)
+  return {
+    props: {
+      pokemon: x,
+    },
+  }
 }
